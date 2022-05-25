@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/services/user_auth.dart';
 
 class LoginForm extends StatefulWidget {
   final void Function(String type) toggleType;
@@ -18,6 +19,13 @@ class LoginFormState extends State<LoginForm> {
       return 'Field cannot be empty';
     }
     return null;
+  }
+
+  void _handleSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      final response = await postUserLogin();
+      print('response di form $response');
+    }
   }
 
   @override
@@ -54,13 +62,7 @@ class LoginFormState extends State<LoginForm> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  Scaffold.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
-              },
+              onPressed: _handleSubmit,
               child: const Text('LOGIN'),
             ),
             const SizedBox(height: 30),
