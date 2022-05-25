@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gotour_mobile/services/user_auth.dart';
+import 'package:gotour_mobile/widgets/main_menu.dart';
 
 class LoginForm extends StatefulWidget {
   final void Function(String type) toggleType;
@@ -13,6 +14,8 @@ class LoginForm extends StatefulWidget {
 
 class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
 
   String? _validate(value) {
     if (value == null || value.isEmpty) {
@@ -23,8 +26,18 @@ class LoginFormState extends State<LoginForm> {
 
   void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final response = await postUserLogin();
-      print('response di form $response');
+      final response = await postUserLogin(emailCtrl.text, passwordCtrl.text);
+      print('response code: ${response.meta.code}');
+      if (response.meta.code == 401) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Wrong email or password'),
+        ));
+      } else if (response.meta.code == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainMenu()),
+        );
+      }
     }
   }
 
@@ -37,6 +50,7 @@ class LoginFormState extends State<LoginForm> {
         child: Column(
           children: [
             TextFormField(
+              controller: emailCtrl,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email),
@@ -49,6 +63,7 @@ class LoginFormState extends State<LoginForm> {
             ),
             const SizedBox(height: 20),
             TextFormField(
+              controller: passwordCtrl,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock),

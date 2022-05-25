@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/services/user_auth.dart';
 
 class RegisterForm extends StatefulWidget {
   final void Function(String type) toggleType;
@@ -12,12 +13,35 @@ class RegisterForm extends StatefulWidget {
 
 class RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+  final nameCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
 
   String? _validate(value) {
     if (value == null || value.isEmpty) {
       return 'Field cannot be empty';
     }
     return null;
+  }
+
+  void _handleSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      final response = await postUserRegister(
+        nameCtrl.text,
+        emailCtrl.text,
+        passwordCtrl.text,
+      );
+      print('response code: ${response.meta.code}');
+      if (response.meta.code == 401) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Wrong email or password'),
+        ));
+      } else if (response.meta.code == 200) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Login success'),
+        ));
+      }
+    }
   }
 
   @override
@@ -29,6 +53,7 @@ class RegisterFormState extends State<RegisterForm> {
         child: Column(
           children: [
             TextFormField(
+              controller: nameCtrl,
               decoration: const InputDecoration(
                 labelText: 'Full name',
                 prefixIcon: Icon(Icons.person),
@@ -41,6 +66,7 @@ class RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 20),
             TextFormField(
+              controller: emailCtrl,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email),
@@ -53,6 +79,7 @@ class RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 20),
             TextFormField(
+              controller: passwordCtrl,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock),
@@ -66,13 +93,7 @@ class RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  Scaffold.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
-              },
+              onPressed: _handleSubmit,
               child: const Text('REGISTER'),
             ),
             const SizedBox(height: 30),
