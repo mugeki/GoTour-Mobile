@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:gotour_mobile/widgets/place_card.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:gotour_mobile/services/places.dart';
+import 'package:gotour_mobile/widgets/place_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,75 +11,84 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var mockPlace = {
-    "id": 1,
-    "name": 'Tangkubah Perahu',
-    "description": 'Bandung, West Java',
-    "imgUrl":
-        'https://gotour.vercel.app/_next/image?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fgotour-27874.appspot.com%2Fo%2FIMG_12032020_142215__822_x_430_piksel_.jpg%3Falt%3Dmedia%26token%3Dbcb66b4c-92b6-4b95-9804-327063958cd8&w=640&q=75',
-    "rating": 4.0,
-    "ratingCount": 120,
-  };
+  late Future _mostRatedPlaces;
+  late Future _recentPlaces;
+
+  @override
+  void initState() {
+    super.initState();
+    _mostRatedPlaces = fetchPlaces(1, "", "rating");
+    _recentPlaces = fetchPlaces(1, "", "created_at");
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      minimum: const EdgeInsets.all(16.0),
+      // minimum: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
           const Text(
             'Most Rated',
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
-          CarouselSlider(
-            options: CarouselOptions(height: 310),
-            items: [
-              PlaceCard(
-                id: mockPlace['id'] as double,
-                isCarousel: true,
-                isMyPlace: false,
-                imgUrl: mockPlace['imgUrl'].toString(),
-                description: mockPlace['description'].toString(),
-                name: mockPlace['name'].toString(),
-                rating: mockPlace['rating'] as double,
-                ratingCount: mockPlace['ratingCount'] as double,
-              ),
-              PlaceCard(
-                id: mockPlace['id'] as double,
-                isCarousel: true,
-                isMyPlace: false,
-                imgUrl: mockPlace['imgUrl'].toString(),
-                description: mockPlace['description'].toString(),
-                name: mockPlace['name'].toString(),
-                rating: mockPlace['rating'] as double,
-                ratingCount: mockPlace['ratingCount'] as double,
-              ),
-              PlaceCard(
-                id: mockPlace['id'] as double,
-                isCarousel: true,
-                isMyPlace: false,
-                imgUrl: mockPlace['imgUrl'].toString(),
-                description: mockPlace['description'].toString(),
-                name: mockPlace['name'].toString(),
-                rating: mockPlace['rating'] as double,
-                ratingCount: mockPlace['ratingCount'] as double,
-              )
-            ],
-          ),
+          FutureBuilder(
+              future: _mostRatedPlaces,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CarouselSlider(
+                    options: CarouselOptions(height: 310.0),
+                    items: (snapshot.data as List).take(4).map((place) {
+                      return PlaceCard(
+                        id: place.id,
+                        isCarousel: true,
+                        isMyPlace: false,
+                        imgUrl: place.imgUrl,
+                        location: place.location,
+                        name: place.name,
+                        rating: double.parse(place.rating),
+                        ratingCount: place.ratingCount,
+                        isWishlisted: place.isWishlisted,
+                      );
+                    }).toList(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+
+                // By default, show a loading spinner.
+                return const Center(child: CircularProgressIndicator());
+              }),
           const Text(
             'Recently Added',
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
-          PlaceCard(
-            id: mockPlace['id'] as double,
-            isCarousel: false,
-            isMyPlace: true,
-            imgUrl: mockPlace['imgUrl'].toString(),
-            description: mockPlace['description'].toString(),
-            name: mockPlace['name'].toString(),
-            rating: mockPlace['rating'] as double,
-            ratingCount: mockPlace['ratingCount'] as double,
-          ),
+          FutureBuilder(
+              future: _recentPlaces,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CarouselSlider(
+                    options: CarouselOptions(height: 310.0),
+                    items: (snapshot.data as List).take(4).map((place) {
+                      return PlaceCard(
+                        id: place.id,
+                        isCarousel: true,
+                        isMyPlace: false,
+                        imgUrl: place.imgUrl,
+                        location: place.location,
+                        name: place.name,
+                        rating: double.parse(place.rating),
+                        ratingCount: place.ratingCount,
+                        isWishlisted: place.isWishlisted,
+                      );
+                    }).toList(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+
+                // By default, show a loading spinner.
+                return const Center(child: CircularProgressIndicator());
+              }),
         ],
       ),
     );

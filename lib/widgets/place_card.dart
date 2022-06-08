@@ -8,21 +8,23 @@ class PlaceCard extends StatelessWidget {
       required this.id,
       required this.imgUrl,
       required this.name,
-      required this.description,
+      required this.location,
       required this.rating,
       required this.ratingCount,
+      required this.isWishlisted,
       this.isCarousel = false,
       this.isMyPlace = false})
       : super(key: key);
 
   final bool isCarousel;
   final bool isMyPlace;
-  final String imgUrl;
-  final String description;
+  final List<dynamic> imgUrl;
+  final String location;
   final String name;
   final double rating;
   final double ratingCount;
   final double id;
+  final bool isWishlisted;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class PlaceCard extends StatelessWidget {
                   width: double.infinity,
                   height: 200,
                   child: Image.network(
-                    imgUrl,
+                    imgUrl[0],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -95,7 +97,7 @@ class PlaceCard extends StatelessWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          const WishlistBtn(),
+                          WishlistBtn(isWishlishted: isWishlisted),
                           if (isMyPlace)
                             DropdownButtonHideUnderline(
                               child: DropdownButton2(
@@ -139,14 +141,22 @@ class PlaceCard extends StatelessWidget {
 }
 
 class WishlistBtn extends StatefulWidget {
-  const WishlistBtn({Key? key}) : super(key: key);
+  final bool isWishlishted;
+
+  const WishlistBtn({Key? key, required this.isWishlishted}) : super(key: key);
 
   @override
   State<WishlistBtn> createState() => _WishlistBtnState();
 }
 
 class _WishlistBtnState extends State<WishlistBtn> {
-  bool _isWishlisted = false;
+  late bool _isWishlisted;
+
+  @override
+  void initState() {
+    super.initState();
+    _isWishlisted = widget.isWishlishted;
+  }
 
   void _toggleWishlist() {
     setState(() {
