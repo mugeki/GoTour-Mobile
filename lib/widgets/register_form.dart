@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gotour_mobile/services/user_auth.dart';
+import 'package:gotour_mobile/widgets/main_menu.dart';
 
 class RegisterForm extends StatefulWidget {
   final void Function(String type) toggleType;
@@ -33,13 +34,14 @@ class RegisterFormState extends State<RegisterForm> {
       );
       print('response code: ${response.meta.code}');
       if (response.meta.code == 401) {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        Scaffold.of(context).showSnackBar(const SnackBar(
           content: Text('Wrong email or password'),
         ));
       } else if (response.meta.code == 200) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text('Login success'),
-        ));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainMenu()),
+        );
       }
     }
   }
