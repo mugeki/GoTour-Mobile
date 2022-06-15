@@ -98,7 +98,7 @@ class RegisterFormState extends State<RegisterForm> {
               onPressed: _handleSubmit,
               child: const Text('REGISTER'),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

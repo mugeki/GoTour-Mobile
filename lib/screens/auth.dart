@@ -45,7 +45,7 @@ class AuthScreenState extends State<AuthScreen> {
           Container(
             alignment: Alignment.topCenter,
             // height: 512,
-            margin: const EdgeInsets.only(top: 150),
+            margin: const EdgeInsets.only(top: 120),
             padding: const EdgeInsets.only(top: 30),
             decoration: const BoxDecoration(
               color: Colors.teal,
@@ -64,26 +64,31 @@ class AuthScreenState extends State<AuthScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            margin: const EdgeInsets.only(top: 225),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    spreadRadius: 4,
-                  ),
-                ]),
-            child: _type == 'login'
-                ? LoginForm(toggleType: _toggleType)
-                : RegisterForm(toggleType: _toggleType),
-          ),
+          SingleChildScrollView(
+            child: Container(
+                alignment: Alignment.bottomCenter,
+                margin: const EdgeInsets.only(top: 190),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        spreadRadius: 4,
+                      ),
+                    ]),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height - 190),
+                  child: _type == 'login'
+                      ? LoginForm(toggleType: _toggleType)
+                      : RegisterForm(toggleType: _toggleType),
+                )),
+          )
         ],
       ),
     );
