@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gotour_mobile/screens/home.dart';
+import 'package:gotour_mobile/screens/myPlace.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class _MainMenuState extends State<MainMenu> {
     HomeScreen(),
     Text('Explore Screen'),
     Text('Saved Places Screen'),
-    Text('My Places Screen'),
+    MyPlaces(),
   ];
 
   void _onItemTapped(int index) {

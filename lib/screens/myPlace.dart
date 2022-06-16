@@ -1,3 +1,4 @@
+import 'package:gotour_mobile/widgets/place_card.dart';
 import 'package:flutter/material.dart';
 
 class MyPlaces extends StatefulWidget {
@@ -32,101 +33,33 @@ class _MyPlacesState extends State<MyPlaces> {
                 ],
               ),
             ),
-            // ignore: avoid_unnecessary_containers
-            Container(
-              // margin: const EdgeInsets.only(top: 15),
-              child: Stack(
-                children: [
-                  SizedBox(
-                      child: Column(
-                    children: [
-                      Container(
-                        height: 200,
-                        width: 300,
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/image/contoh.png'),
-                              fit: BoxFit.fill,
-                            ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Center(
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                                height: 70,
-                                width: double.infinity,
-                                child: DecoratedBox(
-                                  decoration:
-                                      BoxDecoration(color: Colors.white),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text("Tangkuban Perahu"),
-                                          const Text("Bandung, West Java"),
-                                          Row(
-                                            children: const [
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text("(120)"),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.add,
-                                              size: 10,
-                                            ),
-                                          ),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.settings,
-                                                size: 10,
-                                              ))
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )),
+            FutureBuilder(builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: (snapshot.data as List)
+                        .take(4)
+                        .map(
+                          (place) => PlaceCard(
+                            id: place.id,
+                            isCarousel: true,
+                            isMyPlace: false,
+                            imgUrl: place.imgUrl,
+                            location: place.location,
+                            name: place.name,
+                            rating: double.parse(place.rating),
+                            ratingCount: place.ratingCount,
+                            isWishlisted: place.isWishlisted,
                           ),
-                        ),
-                      ),
-                    ],
-                  )),
-                ],
-              ),
-            )
+                        )
+                        .toList(),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+              return const Center(child: CircularProgressIndicator());
+            })
           ],
         ),
       ),
