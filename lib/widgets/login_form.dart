@@ -80,7 +80,7 @@ class LoginFormState extends State<LoginForm> {
               onPressed: _handleSubmit,
               child: const Text('LOGIN'),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
