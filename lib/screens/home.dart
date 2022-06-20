@@ -11,8 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future _mostRatedPlaces;
-  late Future _recentPlaces;
+  late Future<List<Place>> _mostRatedPlaces;
+  late Future<List<Place>> _recentPlaces;
 
   @override
   void initState() {
@@ -31,12 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
             'Most Rated',
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
-          FutureBuilder(
+          FutureBuilder<List<Place>>(
               future: _mostRatedPlaces,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return CarouselSlider(
-                    options: CarouselOptions(height: 310.0),
+                    options: CarouselOptions(height: 215.0),
                     items: (snapshot.data as List).take(4).map((place) {
                       return PlaceCard(
                         id: place.id,
@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
-
                 // By default, show a loading spinner.
                 return const Center(child: CircularProgressIndicator());
               }),
@@ -67,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return CarouselSlider(
-                    options: CarouselOptions(height: 310.0),
+                    options: CarouselOptions(height: 215.0),
                     items: (snapshot.data as List).take(4).map((place) {
                       return PlaceCard(
                         id: place.id,
@@ -85,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
-
                 // By default, show a loading spinner.
                 return const Center(child: CircularProgressIndicator());
               }),

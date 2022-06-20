@@ -29,7 +29,7 @@ class LoginFormState extends State<LoginForm> {
       final response = await postUserLogin(emailCtrl.text, passwordCtrl.text);
       print('response code: ${response.meta.code}');
       if (response.meta.code == 401) {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        Scaffold.of(context).showSnackBar(const SnackBar(
           content: Text('Wrong email or password'),
         ));
       } else if (response.meta.code == 200) {
@@ -80,7 +80,7 @@ class LoginFormState extends State<LoginForm> {
               onPressed: _handleSubmit,
               child: const Text('LOGIN'),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

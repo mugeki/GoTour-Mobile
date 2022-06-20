@@ -25,43 +25,51 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('GoTour'),
-        titleTextStyle: const TextStyle(
-          color: Colors.teal,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: _selectedIndex != 1
+            ? AppBar(
+                title: const Text('GoTour'),
+                titleTextStyle: const TextStyle(
+                  color: Colors.teal,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                backgroundColor: Colors.white,
+              )
+            : PreferredSize(
+                preferredSize: const Size(0.0, 0.0),
+                child: Container(),
+              ),
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Theme.of(context).primaryColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'My Places',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        // selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+        bottomNavigationBar: BottomNavigationBar(
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Theme.of(context).primaryColor,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Explore',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bookmark),
+              label: 'Saved',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'My Places',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          // selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gotour_mobile/screens/auth.dart';
@@ -14,7 +15,12 @@ class MyApp extends StatelessWidget {
 
   Future<String> isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(prefs.containsKey('access_token'));
+    if (kDebugMode) {
+      prefs.remove('access_token');
+    }
     bool loggedIn = prefs.containsKey('access_token');
+
     if (loggedIn == true) {
       return 'loggedIn';
     }
