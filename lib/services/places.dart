@@ -33,6 +33,31 @@ Future<List<Place>> fetchPlaces(
   }
 }
 
+Future postPlace(String name, location, description) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final apiUrl = "${dotenv.env['BE_API_URL']}/place";
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'name': name,
+      'location': location,
+      'description': description,
+      // 'image': place.imgUrl,
+    }),
+  );
+
+  dynamic decodedResponse;
+  if (response.body.isEmpty) {
+    return response.statusCode;
+  }
+  decodedResponse = Place.fromJson(jsonDecode(response.body));
+  prefs.setString('access_token', decodedResponse.accessToken);
+  return decodedResponse;
+}
+
 class Place {
   final dynamic id;
   final dynamic authorId;
