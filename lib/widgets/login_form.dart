@@ -29,7 +29,7 @@ class LoginFormState extends State<LoginForm> {
       final response = await postUserLogin(emailCtrl.text, passwordCtrl.text);
       print('response code: ${response.meta.code}');
       if (response.meta.code == 401) {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        Scaffold.of(context).showSnackBar(const SnackBar(
           content: Text('Wrong email or password'),
         ));
       } else if (response.meta.code == 200) {
