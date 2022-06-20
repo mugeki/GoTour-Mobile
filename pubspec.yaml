@@ -37,8 +37,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   shared_preferences: ^2.0.15
   flutter_rating_bar: ^4.0.1
+  dropdown_button2: ^1.6.2
   carousel_slider: ^4.1.1
-  dropdown_button2: ^1.5.3
 
 dev_dependencies:
   flutter_test:

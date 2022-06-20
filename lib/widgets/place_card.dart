@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gotour_mobile/screens/detail.dart';
-import 'package:gotour_mobile/widgets/wishlist_btn.dart';
 
 class PlaceCard extends StatelessWidget {
   const PlaceCard(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/screens/explore.dart';
 import 'package:gotour_mobile/screens/home.dart';
 
 class MainMenu extends StatefulWidget {
@@ -12,7 +13,7 @@ class _MainMenuState extends State<MainMenu> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    Text('Explore Screen'),
+    ExploreScreen(),
     Text('Saved Places Screen'),
     Text('My Places Screen'),
   ];
