@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/screens/addPlace_form.dart';
 
 class MyPlaces extends StatefulWidget {
   const MyPlaces({Key? key}) : super(key: key);
@@ -24,7 +25,12 @@ class _MyPlacesState extends State<MyPlaces> {
                     style: TextStyle(color: Color(0xff499E8F), fontSize: 18),
                   ),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AddPlace()),
+                        );
+                      },
                       icon: const Icon(
                         Icons.add_box_outlined,
                         color: Color(0xff499E8F),
@@ -45,7 +51,7 @@ class _MyPlacesState extends State<MyPlaces> {
                         width: 300,
                         decoration: const BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage('assets/image/contoh.png'),
+                              image: AssetImage('assets/images/logo.png'),
                               fit: BoxFit.fill,
                             ),
                             borderRadius:
