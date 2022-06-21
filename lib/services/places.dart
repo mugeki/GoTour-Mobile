@@ -129,7 +129,6 @@ Future postPlace(String name, location, description) async {
     return response.statusCode;
   }
   decodedResponse = Place.fromJson(jsonDecode(response.body));
-  prefs.setString('access_token', decodedResponse.accessToken);
   return decodedResponse;
 }
 

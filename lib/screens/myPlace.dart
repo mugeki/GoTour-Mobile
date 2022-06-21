@@ -28,7 +28,8 @@ class _MyPlacesState extends State<MyPlaces> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AddPlace()),
+                          MaterialPageRoute(
+                              builder: (context) => AddPlaceForm()),
                         );
                       },
                       icon: const Icon(

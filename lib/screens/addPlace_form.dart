@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/screens/myPlace.dart';
+import 'package:gotour_mobile/services/places.dart';
 
-class AddPlace extends StatelessWidget {
-  String? _validate(value) {
-    if (value == null || value.isEmpty) {
-      return 'Field cannot be empty';
+class AddPlaceForm extends StatefulWidget {
+  AddPlaceFormState createState() {
+    return AddPlaceFormState();
+  }
+}
+
+class AddPlaceFormState extends State<AddPlaceForm> {
+  final _formKey = GlobalKey<FormState>();
+  final nameCtrl = TextEditingController();
+  final locationCtrl = TextEditingController();
+  final descCtrl = TextEditingController();
+
+  void _handleSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      final response =
+          await postPlace(nameCtrl.text, locationCtrl.text, descCtrl.text);
+      print('response code: ${response.meta.code}');
+      if (response.meta.code == 200) {
+        Navigator.pop(
+          context,
+          // MaterialPageRoute(builder: (context) => const MyPlaces()),
+        );
+      }
     }
-    return null;
   }
 
   @override
@@ -16,14 +36,22 @@ class AddPlace extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFormField(
+            controller: nameCtrl,
             decoration: const InputDecoration(
                 labelText: 'Place Name',
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)))),
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: locationCtrl,
             decoration: const InputDecoration(
                 labelText: 'Location',
                 border: OutlineInputBorder(
@@ -38,6 +66,7 @@ class AddPlace extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            controller: descCtrl,
             decoration: const InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(
