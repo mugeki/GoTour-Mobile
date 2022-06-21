@@ -33,6 +33,7 @@ Future<List<Place>> fetchPlaces(
   }
 }
 
+// Service for get My Places
 Future<List<Place>> fetchMyPlaces() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
@@ -83,6 +84,28 @@ Future<Place> fetchPlace(int id) async {
     return Place.fromJson(placeResponseDecoded['data']);
   } else {
     throw Exception('Failed to load place');
+  }
+}
+
+// Service for Edit Place
+Future<Place> putPlace(int id, Place place) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http
+      .put(Uri.parse("${dotenv.env['BE_API_URL']}/place/$id"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+    // HttpHeaders.contentTypeHeader: "application/json",
+  }, body: <String, String, String>{
+    'name': place.name,
+    'location': place.location,
+    'description': place.description,
+    // 'img_urls': place.img_urls,
+  });
+
+  if (placeResponse.statusCode == 200) {
+    return Place.fromJson(jsonDecode(placeResponse.body)['data']);
+  } else {
+    throw Exception('Failed to edit place');
   }
 }
 

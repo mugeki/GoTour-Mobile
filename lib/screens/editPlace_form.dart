@@ -85,7 +85,7 @@ class EditPlaceFormState extends State<EditPlaceForm> {
               onPressed: () {},
               // pEditing:
               child: const Text(
-                'Edit Place',
+                'Save',
                 style: TextStyle(),
               ),
               style: ButtonStyle(
