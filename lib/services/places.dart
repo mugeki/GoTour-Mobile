@@ -33,6 +33,35 @@ Future<List<Place>> fetchPlaces(
   }
 }
 
+Future<List<Place>> fetchMyPlaces() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/my-place"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+  final wishlistResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/wishlist"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var placeResponseDecoded = jsonDecode(placeResponse.body);
+  var wishlistResponseDecoded = jsonDecode(wishlistResponse.body);
+
+  placeResponseDecoded['data']['data'].forEach((place) => {
+        place['is_wishlisted'] = wishlistResponseDecoded['data']
+            .any((wishlist) => wishlist['id'] == place['id'])
+      });
+
+  if (placeResponse.statusCode == 200) {
+    return placeResponseDecoded['data']['data']
+        .map<Place>((place) => Place.fromJson(place))
+        .toList();
+  } else {
+    throw Exception('Failed to load place');
+  }
+}
+
 Future<Place> fetchPlace(int id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
