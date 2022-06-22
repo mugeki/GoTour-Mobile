@@ -41,7 +41,7 @@ Future postUserLogin(String email, password) async {
     return response.statusCode;
   }
   decodedResponse = UserAuth.fromJson(jsonDecode(response.body));
-  prefs.setString('access_token', decodedResponse.accessToken);
+  await prefs.setString('access_token', decodedResponse.accessToken);
   return decodedResponse;
 }
 
@@ -65,6 +65,6 @@ Future postUserRegister(name, email, password) async {
     return response.statusCode;
   }
   decodedResponse = UserAuth.fromJson(jsonDecode(response.body));
-  prefs.setString('access_token', decodedResponse.accessToken);
+  await prefs.setString('access_token', decodedResponse.accessToken);
   return decodedResponse;
 }
