@@ -33,6 +33,57 @@ Future<List<Place>> fetchPlaces(
   }
 }
 
+Future<List<Place>> fetchMyPlaces() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/my-places"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+  final wishlistResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/wishlist"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var placeResponseDecoded = jsonDecode(placeResponse.body);
+  var wishlistResponseDecoded = jsonDecode(wishlistResponse.body);
+
+  placeResponseDecoded.forEach((place) => {
+        place['is_wishlisted'] = wishlistResponseDecoded['data']
+            .any((wishlist) => wishlist['id'] == place['id'])
+      });
+
+  if (placeResponse.statusCode == 200) {
+    return placeResponseDecoded
+        .map<Place>((place) => Place.fromJson(place))
+        .toList();
+  } else {
+    throw Exception('Failed to load place');
+  }
+}
+
+Future<List<Place>> fetchMyWishlist() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final wishlistResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/wishlist"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var wishlistResponseDecoded = jsonDecode(wishlistResponse.body);
+
+  wishlistResponseDecoded['data']
+      .forEach((place) => {place['is_wishlisted'] = true});
+
+  if (wishlistResponse.statusCode == 200) {
+    return wishlistResponseDecoded['data']
+        .map<Place>((place) => Place.fromJson(place))
+        .toList();
+  } else {
+    throw Exception('Failed to load place');
+  }
+}
+
 Future<Place> fetchPlace(int id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
@@ -105,6 +156,48 @@ Future toggleWishlistPlace(int id, bool isWishlisted) async {
   } else {
     print(response);
     throw Exception('Failed to wishlist place');
+  }
+}
+
+Future postPlace(String name, location, description) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final apiUrl = "${dotenv.env['BE_API_URL']}/place";
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'name': name,
+      'location': location,
+      'description': description,
+      // 'image': place.imgUrl,
+    }),
+  );
+
+  dynamic decodedResponse;
+  if (response.body.isEmpty) {
+    return response.statusCode;
+  }
+  decodedResponse = Place.fromJson(jsonDecode(response.body));
+  return decodedResponse;
+}
+
+Future deletePlace(int id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http
+      .delete(Uri.parse("${dotenv.env['BE_API_URL']}/place/$id"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var placeResponseDecoded = jsonDecode(placeResponse.body);
+
+  if (placeResponse.statusCode == 200) {
+    return placeResponse.statusCode;
+  } else {
+    print(placeResponseDecoded);
+    throw Exception('Failed to rate place');
   }
 }
 
