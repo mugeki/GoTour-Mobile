@@ -1,3 +1,4 @@
+import 'package:gotour_mobile/screens/add_place_form.dart';
 import 'package:gotour_mobile/widgets/place_card.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,24 @@ class _MyPlacesState extends State<MyPlaces> {
     _myPlaces = fetchMyPlaces();
   }
 
+  void refreshList(int id) {
+    // reload
+    setState(() {
+      _myPlaces = _deleteAndGetPlaces(id);
+    });
+  }
+
+  Future<List<Place>> _deleteAndGetPlaces(int id) async {
+    await deletePlace(id);
+    List<Place> newMyPlaces = await fetchMyPlaces();
+    const snackBar = SnackBar(
+      content: Text('Place has been deleted.'),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    return newMyPlaces;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +50,12 @@ class _MyPlacesState extends State<MyPlaces> {
         backgroundColor: Colors.grey[50],
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddPlaceForm()),
+                );
+              },
               icon: const Icon(
                 Icons.add_box_outlined,
                 color: Colors.teal,
@@ -56,9 +80,11 @@ class _MyPlacesState extends State<MyPlaces> {
                         imgUrl: snapshot.data![index].imgUrl,
                         location: snapshot.data![index].location,
                         name: snapshot.data![index].name,
+                        description: snapshot.data![index].description,
                         rating: double.parse(snapshot.data![index].rating),
                         ratingCount: snapshot.data![index].ratingCount,
                         isWishlisted: snapshot.data![index].isWishlisted,
+                        refreshList: refreshList,
                       ),
                     );
                   });

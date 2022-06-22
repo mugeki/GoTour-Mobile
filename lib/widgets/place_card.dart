@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gotour_mobile/screens/detail.dart';
+import 'package:gotour_mobile/screens/edit_place_form.dart';
 import 'package:gotour_mobile/widgets/wishlist_btn.dart';
 
 class PlaceCard extends StatelessWidget {
@@ -11,9 +12,11 @@ class PlaceCard extends StatelessWidget {
       required this.imgUrl,
       required this.name,
       required this.location,
+      required this.description,
       required this.rating,
       required this.ratingCount,
       required this.isWishlisted,
+      this.refreshList,
       this.isCarousel = false,
       this.isMyPlace = false})
       : super(key: key);
@@ -23,10 +26,12 @@ class PlaceCard extends StatelessWidget {
   final List<dynamic> imgUrl;
   final String location;
   final String name;
+  final String description;
   final double rating;
   final int ratingCount;
   final int id;
   final bool isWishlisted;
+  final ValueChanged<int>? refreshList;
 
   @override
   Widget build(BuildContext context) {
@@ -129,9 +134,26 @@ class PlaceCard extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                                onChanged: (value) {
-                                  MenuItems.onChanged(
-                                      context, value as MenuItem);
+                                onChanged: (value) async {
+                                  // MenuItems.onChanged(
+                                  //     context, value as MenuItem);
+                                  switch (value) {
+                                    case MenuItems.edit:
+                                      //Do something
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EditPlaceForm(
+                                                      name: name,
+                                                      location: location,
+                                                      description:
+                                                          description)));
+                                      break;
+                                    case MenuItems.delete:
+                                      refreshList!(id);
+                                      break;
+                                  }
                                 },
                                 dropdownWidth: 140,
                                 dropdownDecoration: BoxDecoration(
@@ -181,16 +203,5 @@ class MenuItems {
         Text(item.text),
       ],
     );
-  }
-
-  static onChanged(BuildContext context, MenuItem item) {
-    switch (item) {
-      case MenuItems.edit:
-        //Do something
-        break;
-      case MenuItems.delete:
-        //Do something
-        break;
-    }
   }
 }

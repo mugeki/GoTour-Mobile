@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gotour_mobile/screens/my_place.dart';
 import 'package:gotour_mobile/services/places.dart';
 
 class EditPlaceForm extends StatefulWidget {
+  const EditPlaceForm(
+      {Key? key,
+      required this.name,
+      required this.location,
+      required this.description})
+      : super(key: key);
+
+  final String name;
+  final String location;
+  final String description;
+
   @override
   EditPlaceFormState createState() {
     return EditPlaceFormState();
@@ -10,10 +20,18 @@ class EditPlaceForm extends StatefulWidget {
 }
 
 class EditPlaceFormState extends State<EditPlaceForm> {
+  @override
+  void initState() {
+    super.initState();
+    nameCtrl = TextEditingController(text: widget.name);
+    locationCtrl = TextEditingController(text: widget.location);
+    descCtrl = TextEditingController(text: widget.description);
+  }
+
   final _formKey = GlobalKey<FormState>();
-  final nameCtrl = TextEditingController();
-  final locationCtrl = TextEditingController();
-  final descCtrl = TextEditingController();
+  var nameCtrl = TextEditingController();
+  var locationCtrl = TextEditingController();
+  var descCtrl = TextEditingController();
 
   void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
@@ -91,7 +109,7 @@ class EditPlaceFormState extends State<EditPlaceForm> {
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   ))),
-              // pEditing:
+              // padding:
               child: const Text(
                 'Edit Place',
                 style: TextStyle(),
