@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'GoTour',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Inter',
         primarySwatch: Colors.teal,
