@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gotour_mobile/screens/detail.dart';
+import 'package:gotour_mobile/screens/edit_place_form.dart';
 import 'package:gotour_mobile/widgets/wishlist_btn.dart';
 
 class PlaceCard extends StatelessWidget {
@@ -165,7 +166,19 @@ class MenuItem {
   });
 }
 
-class MenuItems {
+
+class MenuItems extends StatelessWidget {
+  const MenuItems(
+      {Key? key,
+      required this.name,
+      required this.location,
+      required this.description})
+      : super(Key: key);
+
+  final String name;
+  final String location;
+  final String description;
+  
   static const List<MenuItem> firstItems = [edit, delete];
 
   static const edit = MenuItem(text: 'Edit', icon: Icons.edit);
@@ -186,7 +199,14 @@ class MenuItems {
   static onChanged(BuildContext context, MenuItem item) {
     switch (item) {
       case MenuItems.edit:
-        //Do something
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EditPlaceForm(
+                      name: ,
+                      location: location,
+                      description: description,
+                    )));
         break;
       case MenuItems.delete:
         //Do something

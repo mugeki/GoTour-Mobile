@@ -1,3 +1,4 @@
+import 'package:gotour_mobile/screens/add_place_form.dart';
 import 'package:gotour_mobile/widgets/place_card.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,12 @@ class _MyPlacesState extends State<MyPlaces> {
         backgroundColor: Colors.grey[50],
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddPlaceForm()),
+                );
+              },
               icon: const Icon(
                 Icons.add_box_outlined,
                 color: Colors.teal,

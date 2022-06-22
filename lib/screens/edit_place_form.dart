@@ -3,6 +3,17 @@ import 'package:gotour_mobile/screens/my_place.dart';
 import 'package:gotour_mobile/services/places.dart';
 
 class EditPlaceForm extends StatefulWidget {
+  const EditPlaceForm(
+      {Key? key,
+      required this.name,
+      required this.location,
+      required this.description})
+      : super(key: key);
+
+  final String name;
+  final String location;
+  final String description;
+
   @override
   EditPlaceFormState createState() {
     return EditPlaceFormState();
@@ -91,7 +102,7 @@ class EditPlaceFormState extends State<EditPlaceForm> {
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   ))),
-              // pEditing:
+              // padding:
               child: const Text(
                 'Edit Place',
                 style: TextStyle(),

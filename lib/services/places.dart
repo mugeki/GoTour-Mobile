@@ -5,6 +5,58 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+// add place
+Future postPlace(String name, location, description) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final apiUrl = "${dotenv.env['BE_API_URL']}/place";
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'name': name,
+      'location': location,
+      'description': description,
+      // 'image': place.imgUrl,
+    }),
+  );
+
+  dynamic decodedResponse;
+  if (response.body.isEmpty) {
+    return response.statusCode;
+  }
+  decodedResponse = Place.fromJson(jsonDecode(response.body));
+  return decodedResponse;
+}
+
+// edit place
+Future<Place> putPlace(
+    int id, String name, String location, String description) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http.put(
+    Uri.parse("${dotenv.env['BE_API_URL']}/place/$id"),
+    headers: {
+      HttpHeaders.authorizationHeader: "Bearer $accessToken",
+    },
+    body: <String, String>{
+      'name': name,
+      'location': location,
+      'description': description,
+    },
+  );
+
+  var placeResponseDecoded = jsonDecode(placeResponse.body);
+
+  if (placeResponse.statusCode == 200) {
+    return Place.fromJson(placeResponseDecoded['data']);
+  } else {
+    print(placeResponseDecoded);
+    throw Exception('Failed to edit place');
+  }
+}
+
 Future<List<Place>> fetchPlaces(
     double page, String keyword, String sortBy) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -135,30 +187,6 @@ Future toggleWishlistPlace(int id, bool isWishlisted) async {
     print(response);
     throw Exception('Failed to wishlist place');
   }
-}
-
-Future postPlace(String name, location, description) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final apiUrl = "${dotenv.env['BE_API_URL']}/place";
-  final response = await http.post(
-    Uri.parse(apiUrl),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'name': name,
-      'location': location,
-      'description': description,
-      // 'image': place.imgUrl,
-    }),
-  );
-
-  dynamic decodedResponse;
-  if (response.body.isEmpty) {
-    return response.statusCode;
-  }
-  decodedResponse = Place.fromJson(jsonDecode(response.body));
-  return decodedResponse;
 }
 
 class Place {
