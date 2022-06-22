@@ -49,6 +49,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         imgUrl: snapshot.data![index].imgUrl,
                         location: snapshot.data![index].location,
                         name: snapshot.data![index].name,
+                        description: snapshot.data![index].description,
                         rating: double.parse(snapshot.data![index].rating),
                         ratingCount: snapshot.data![index].ratingCount,
                         isWishlisted: snapshot.data![index].isWishlisted,
