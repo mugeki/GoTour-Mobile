@@ -62,6 +62,28 @@ Future<List<Place>> fetchMyPlaces() async {
   }
 }
 
+Future<List<Place>> fetchMyWishlist() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final wishlistResponse = await http
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/wishlist"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var wishlistResponseDecoded = jsonDecode(wishlistResponse.body);
+
+  wishlistResponseDecoded['data']
+      .forEach((place) => {place['is_wishlisted'] = true});
+
+  if (wishlistResponse.statusCode == 200) {
+    return wishlistResponseDecoded['data']
+        .map<Place>((place) => Place.fromJson(place))
+        .toList();
+  } else {
+    throw Exception('Failed to load place');
+  }
+}
+
 Future<Place> fetchPlace(int id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
