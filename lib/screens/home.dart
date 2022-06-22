@@ -30,12 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        // minimum: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Text(
-              'Most Rated',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: const Text(
+                'Most Rated',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
             ),
             FutureBuilder<List<Place>>(
                 future: _mostRatedPlaces,
@@ -63,9 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   // By default, show a loading spinner.
                   return const Center(child: CircularProgressIndicator());
                 }),
-            const Text(
-              'Recently Added',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: const Text(
+                'Recently Added',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
             ),
             FutureBuilder(
                 future: _recentPlaces,

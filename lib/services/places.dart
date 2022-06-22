@@ -183,6 +183,24 @@ Future postPlace(String name, location, description) async {
   return decodedResponse;
 }
 
+Future deletePlace(int id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final placeResponse = await http
+      .delete(Uri.parse("${dotenv.env['BE_API_URL']}/place/$id"), headers: {
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  var placeResponseDecoded = jsonDecode(placeResponse.body);
+
+  if (placeResponse.statusCode == 200) {
+    return placeResponse.statusCode;
+  } else {
+    print(placeResponseDecoded);
+    throw Exception('Failed to rate place');
+  }
+}
+
 class Place {
   final dynamic id;
   final dynamic authorId;
