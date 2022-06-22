@@ -37,7 +37,7 @@ Future<List<Place>> fetchMyPlaces() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
   final placeResponse = await http
-      .get(Uri.parse("${dotenv.env['BE_API_URL']}/my-place"), headers: {
+      .get(Uri.parse("${dotenv.env['BE_API_URL']}/my-places"), headers: {
     HttpHeaders.authorizationHeader: "Bearer $accessToken",
   });
   final wishlistResponse = await http
@@ -48,13 +48,13 @@ Future<List<Place>> fetchMyPlaces() async {
   var placeResponseDecoded = jsonDecode(placeResponse.body);
   var wishlistResponseDecoded = jsonDecode(wishlistResponse.body);
 
-  placeResponseDecoded['data']['data'].forEach((place) => {
+  placeResponseDecoded.forEach((place) => {
         place['is_wishlisted'] = wishlistResponseDecoded['data']
             .any((wishlist) => wishlist['id'] == place['id'])
       });
 
   if (placeResponse.statusCode == 200) {
-    return placeResponseDecoded['data']['data']
+    return placeResponseDecoded
         .map<Place>((place) => Place.fromJson(place))
         .toList();
   } else {

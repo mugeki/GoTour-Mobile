@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gotour_mobile/screens/myPlace.dart';
+import 'package:gotour_mobile/screens/my_place.dart';
 import 'package:gotour_mobile/services/places.dart';
 
 class EditPlaceForm extends StatefulWidget {
+  @override
   EditPlaceFormState createState() {
     return EditPlaceFormState();
   }
@@ -83,18 +84,18 @@ class EditPlaceFormState extends State<EditPlaceForm> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {},
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 255, 255)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ))),
               // pEditing:
               child: const Text(
                 'Edit Place',
                 style: TextStyle(),
               ),
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromARGB(255, 255, 255, 255)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ))),
             )
           ],
         ),

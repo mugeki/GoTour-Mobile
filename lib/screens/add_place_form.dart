@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gotour_mobile/screens/myPlace.dart';
+import 'package:gotour_mobile/screens/my_place.dart';
 import 'package:gotour_mobile/services/places.dart';
 
 class AddPlaceForm extends StatefulWidget {
+  @override
   AddPlaceFormState createState() {
     return AddPlaceFormState();
   }
@@ -83,18 +84,18 @@ class AddPlaceFormState extends State<AddPlaceForm> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {},
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 255, 255)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ))),
               // padding:
               child: const Text(
                 'Add Place',
                 style: TextStyle(),
               ),
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromARGB(255, 255, 255, 255)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ))),
             )
           ],
         ),
