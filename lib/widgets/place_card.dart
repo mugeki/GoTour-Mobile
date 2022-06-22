@@ -166,19 +166,18 @@ class MenuItem {
   });
 }
 
-
 class MenuItems extends StatelessWidget {
   const MenuItems(
       {Key? key,
       required this.name,
       required this.location,
       required this.description})
-      : super(Key: key);
+      : super(key: key);
 
   final String name;
   final String location;
   final String description;
-  
+
   static const List<MenuItem> firstItems = [edit, delete];
 
   static const edit = MenuItem(text: 'Edit', icon: Icons.edit);
@@ -203,7 +202,7 @@ class MenuItems extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => EditPlaceForm(
-                      name: ,
+                      name: widget.name,
                       location: location,
                       description: description,
                     )));
