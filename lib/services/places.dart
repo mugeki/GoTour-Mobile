@@ -18,16 +18,16 @@ Future postPlace(String name, location, description) async {
       'name': name,
       'location': location,
       'description': description,
-      // 'image': place.imgUrl,
     }),
   );
 
   dynamic decodedResponse;
   if (response.body.isEmpty) {
     return response.statusCode;
+  } else {
+    decodedResponse = jsonDecode(response.body);
+    return decodedResponse;
   }
-  decodedResponse = Place.fromJson(jsonDecode(response.body));
-  return decodedResponse;
 }
 
 // edit place
@@ -52,6 +52,7 @@ Future<Place> putPlace(
   if (placeResponse.statusCode == 200) {
     return Place.fromJson(placeResponseDecoded['data']);
   } else {
+    print("GAMASOK PAK EKOOO");
     print(placeResponseDecoded);
     throw Exception('Failed to edit place');
   }

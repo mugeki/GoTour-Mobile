@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gotour_mobile/services/places.dart';
 
@@ -33,18 +36,20 @@ class EditPlaceFormState extends State<EditPlaceForm> {
   var locationCtrl = TextEditingController();
   var descCtrl = TextEditingController();
 
+  File? file;
+
   void _handleSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      final response =
-          await postPlace(nameCtrl.text, locationCtrl.text, descCtrl.text);
-      print('response code: ${response.meta.code}');
-      if (response.meta.code == 200) {
-        Navigator.pop(
-          context,
-          // MaterialPageRoute(builder: (context) => const MyPlaces()),
-        );
-      }
-    }
+    // if (_formKey.currentState!.validate()) {
+    //   final response =
+    //       await putPlace(nameCtrl.text, locationCtrl.text, descCtrl.text);
+    //   print('response code: ${response.meta.code}');
+    //   if (response.meta.code == 200) {
+    //     Navigator.pop(
+    //       context,
+    //       // MaterialPageRoute(builder: (context) => const MyPlaces()),
+    //     );
+    //   }
+    // }
   }
 
   @override
@@ -100,6 +105,38 @@ class EditPlaceFormState extends State<EditPlaceForm> {
               },
             ),
             const SizedBox(height: 20),
+            Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const Text('Select Photo(s)'),
+                  style: OutlinedButton.styleFrom(
+                    primary: Colors.teal,
+                    backgroundColor: Colors.white,
+                    // borderSide: const BorderSide(
+                    //   color: Colors.teal,
+                    // ),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(100))),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const Text('Take Photo(s)'),
+                  style: OutlinedButton.styleFrom(
+                    primary: Colors.teal,
+                    backgroundColor: Colors.white,
+                    // borderSide: const BorderSide(
+                    //   color: Colors.teal,
+                    // ),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(100))),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {},
               style: ButtonStyle(
@@ -119,5 +156,16 @@ class EditPlaceFormState extends State<EditPlaceForm> {
         ),
       ),
     );
+  }
+
+  Future SelectFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      allowedExtensions: ['jpg', 'png'],
+    );
+    if (result == null) return;
+    final path = result.files.single.path!;
+
+    setState(() => file = File(path));
   }
 }
