@@ -50,7 +50,7 @@ class AddPlaceFormState extends State<AddPlaceForm> {
   // final imgCtrl = FileController();
 
   PlatformFile? pickedFile;
-
+// upload single image to firebase
   Future uploadFile() async {
     final path = 'files/${pickedFile!.name}';
     final file = File(pickedFile!.path!);
@@ -59,6 +59,7 @@ class AddPlaceFormState extends State<AddPlaceForm> {
     ref.putFile(file);
   }
 
+// select single image from gallery
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
