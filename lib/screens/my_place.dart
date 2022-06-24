@@ -33,13 +33,10 @@ class _MyPlacesState extends State<MyPlaces> {
         actions: [
           IconButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => AddPlaceForm(
-                //             // camera: firstCamera,
-                //           )),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddPlaceForm()),
+                );
               },
               icon: const Icon(
                 Icons.add_box_outlined,

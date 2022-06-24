@@ -6,8 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // add place
-Future postPlace(String name, location, description) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+Future postPlace(
+  String name,
+  location,
+  description,
+  /*Array imgUrls*/
+) async {
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
   final apiUrl = "${dotenv.env['BE_API_URL']}/place";
   final response = await http.post(
     Uri.parse(apiUrl),
@@ -18,6 +23,7 @@ Future postPlace(String name, location, description) async {
       'name': name,
       'location': location,
       'description': description,
+      // 'img_urls': imgUrls,
     }),
   );
 
@@ -32,7 +38,12 @@ Future postPlace(String name, location, description) async {
 
 // edit place
 Future<Place> putPlace(
-    int id, String name, String location, String description) async {
+  int id,
+  String name,
+  String location,
+  String description,
+  /*   Array imgUrls*/
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
   final placeResponse = await http.put(
@@ -40,10 +51,11 @@ Future<Place> putPlace(
     headers: {
       HttpHeaders.authorizationHeader: "Bearer $accessToken",
     },
-    body: <String, String>{
+    body: <String, dynamic>{
       'name': name,
       'location': location,
       'description': description,
+      // 'img_urls': imgUrls,
     },
   );
 
