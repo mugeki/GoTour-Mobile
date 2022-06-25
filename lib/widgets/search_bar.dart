@@ -1,8 +1,24 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
+class FilterItem {
+  final String text;
+  final String value;
+  final IconData icon;
+
+  const FilterItem({
+    required this.text,
+    required this.value,
+    required this.icon,
+  });
+}
+
 class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
+  final Function(String) onSubmitSearchBar;
+  final Function(String) onSortChanged;
+  const SearchBar(
+      {Key? key, required this.onSubmitSearchBar, required this.onSortChanged})
+      : super(key: key);
 
   @override
   SearchBarState createState() {
@@ -12,6 +28,29 @@ class SearchBar extends StatefulWidget {
 
 class SearchBarState extends State<SearchBar> {
   final queryCtrl = TextEditingController();
+  String? _activeItem;
+  final List<FilterItem> dropdownItems = [
+    const FilterItem(
+        text: 'Date added', value: "created_at", icon: Icons.calendar_month),
+    const FilterItem(text: 'Rating', value: "rating", icon: Icons.star)
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _activeItem = "created_at";
+  }
+
+  void onChangeDropdownItem(FilterItem item) {
+    setState(() {
+      _activeItem = item.value;
+    });
+    widget.onSortChanged(item.value);
+  }
+
+  // void onSubmit() {
+  //   widget.onSubmitSearchBar(queryCtrl.text);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +78,9 @@ class SearchBarState extends State<SearchBar> {
                   borderSide: BorderSide(color: (Colors.grey[200])!),
                 ),
               ),
+              onSubmitted: (value) {
+                widget.onSubmitSearchBar(queryCtrl.text);
+              },
             ),
           ),
           Container(
@@ -50,15 +92,36 @@ class SearchBarState extends State<SearchBar> {
                   size: 25,
                 ),
                 items: [
-                  ...FilterItems.firstItems.map(
+                  ...dropdownItems.map(
                     (item) => DropdownMenuItem<FilterItem>(
                       value: item,
-                      child: FilterItems.buildItem(item),
+                      child: Row(
+                        children: [
+                          Icon(
+                            item.icon,
+                            size: 22,
+                            color: _activeItem == item.value
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.black,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            item.text,
+                            style: TextStyle(
+                              color: _activeItem == item.value
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
                 onChanged: (value) {
-                  FilterItems.onChanged(context, value as FilterItem);
+                  onChangeDropdownItem(value as FilterItem);
                 },
                 dropdownWidth: 140,
                 dropdownDecoration: BoxDecoration(
@@ -72,46 +135,5 @@ class SearchBarState extends State<SearchBar> {
         ],
       ),
     );
-  }
-}
-
-class FilterItem {
-  final String text;
-  final IconData icon;
-
-  const FilterItem({
-    required this.text,
-    required this.icon,
-  });
-}
-
-class FilterItems {
-  static const List<FilterItem> firstItems = [date, rating];
-
-  static const date =
-      FilterItem(text: 'Date added', icon: Icons.calendar_month);
-  static const rating = FilterItem(text: 'Rating', icon: Icons.star);
-
-  static Widget buildItem(FilterItem item) {
-    return Row(
-      children: [
-        Icon(item.icon, size: 22),
-        const SizedBox(
-          width: 10,
-        ),
-        Text(item.text),
-      ],
-    );
-  }
-
-  static onChanged(BuildContext context, FilterItem item) {
-    switch (item) {
-      case FilterItems.date:
-        //Do something
-        break;
-      case FilterItems.rating:
-        //Do something
-        break;
-    }
   }
 }

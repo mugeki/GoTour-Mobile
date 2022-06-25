@@ -16,6 +16,7 @@ class PlaceCard extends StatelessWidget {
       required this.rating,
       required this.ratingCount,
       required this.isWishlisted,
+      this.refreshList,
       this.isCarousel = false,
       this.isMyPlace = false})
       : super(key: key);
@@ -30,6 +31,7 @@ class PlaceCard extends StatelessWidget {
   final int ratingCount;
   final int id;
   final bool isWishlisted;
+  final ValueChanged<int>? refreshList;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +134,7 @@ class PlaceCard extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                                onChanged: (value) {
+                                onChanged: (value) async {
                                   // MenuItems.onChanged(
                                   //     context, value as MenuItem);
                                   switch (value) {
@@ -149,7 +151,7 @@ class PlaceCard extends StatelessWidget {
                                                           description)));
                                       break;
                                     case MenuItems.delete:
-                                      //Do something
+                                      refreshList!(id);
                                       break;
                                   }
                                 },

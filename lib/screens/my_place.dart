@@ -20,6 +20,24 @@ class _MyPlacesState extends State<MyPlaces> {
     _myPlaces = fetchMyPlaces();
   }
 
+  void refreshList(int id) {
+    // reload
+    setState(() {
+      _myPlaces = _deleteAndGetPlaces(id);
+    });
+  }
+
+  Future<List<Place>> _deleteAndGetPlaces(int id) async {
+    await deletePlace(id);
+    List<Place> newMyPlaces = await fetchMyPlaces();
+    const snackBar = SnackBar(
+      content: Text('Place has been deleted.'),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    return newMyPlaces;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +84,7 @@ class _MyPlacesState extends State<MyPlaces> {
                         rating: double.parse(snapshot.data![index].rating),
                         ratingCount: snapshot.data![index].ratingCount,
                         isWishlisted: snapshot.data![index].isWishlisted,
+                        refreshList: refreshList,
                       ),
                     );
                   });
