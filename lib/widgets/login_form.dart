@@ -37,10 +37,9 @@ class LoginFormState extends State<LoginForm> {
     });
     if (_formKey.currentState!.validate()) {
       final response = await postUserLogin(emailCtrl.text, passwordCtrl.text);
-      print('response code: ${response.meta.code}');
       if (response.meta.code == 401) {
-        Scaffold.of(context).showSnackBar(const SnackBar(
-          content: Text('Wrong email or password'),
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Wrong credentials'),
         ));
       } else if (response.meta.code == 200) {
         Navigator.pushReplacement(

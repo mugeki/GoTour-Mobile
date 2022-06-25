@@ -229,7 +229,6 @@ Future toggleWishlistPlace(
   if (response.statusCode == 200) {
     return "$id ${isWishlisted ? 'removed' : 'added'} to wishlist";
   } else {
-    print(response);
     throw Exception('Failed to wishlist place');
   }
 }

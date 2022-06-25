@@ -78,17 +78,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
         child: PagedListView<int, Place>(
           pagingController: _pagingController,
           builderDelegate: PagedChildBuilderDelegate<Place>(
-            itemBuilder: (context, item, index) => PlaceCard(
-              id: item.id,
-              isCarousel: false,
-              isMyPlace: false,
-              imgUrl: item.imgUrl,
-              location: item.location,
-              name: item.name,
-              rating: double.parse(item.rating),
-              ratingCount: item.ratingCount,
-              isWishlisted: item.isWishlisted,
-              description: item.description,
+            itemBuilder: (context, item, index) => Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 5),
+              child: PlaceCard(
+                id: item.id,
+                isCarousel: false,
+                isMyPlace: false,
+                imgUrl: item.imgUrl,
+                location: item.location,
+                name: item.name,
+                rating: double.parse(item.rating),
+                ratingCount: item.ratingCount,
+                isWishlisted: item.isWishlisted,
+                description: item.description,
+              ),
             ),
           ),
         ),

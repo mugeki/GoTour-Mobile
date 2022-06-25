@@ -42,10 +42,9 @@ class RegisterFormState extends State<RegisterForm> {
         emailCtrl.text,
         passwordCtrl.text,
       );
-      print('response code: ${response.meta.code}');
-      if (response.meta.code == 401) {
-        Scaffold.of(context).showSnackBar(const SnackBar(
-          content: Text('Wrong email or password'),
+      if (response.meta.code != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("${response.meta.message[0]}"),
         ));
       } else if (response.meta.code == 200) {
         Navigator.pushReplacement(
