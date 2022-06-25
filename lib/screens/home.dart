@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:gotour_mobile/screens/auth.dart';
 import 'package:gotour_mobile/services/places.dart';
+import 'package:gotour_mobile/services/user_auth.dart';
 import 'package:gotour_mobile/widgets/place_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,6 +23,22 @@ class _HomeScreenState extends State<HomeScreen> {
     _recentPlaces = fetchPlaces(1, "", "created_at");
   }
 
+  void logout(BuildContext context) async {
+    final response = await logoutUser();
+    if (response == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Logged out succesfully'),
+      ));
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AuthScreen(),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset('assets/images/home_logo.png'),
         backgroundColor: Colors.grey[50],
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () => logout(context),
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.teal,
+              )),
+        ],
       ),
       body: SafeArea(
         child: ListView(
@@ -66,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // By default, show a loading spinner.
                   return const Center(child: CircularProgressIndicator());
                 }),
+            SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(10.0),
               child: const Text(

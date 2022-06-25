@@ -91,8 +91,6 @@ class _DetailState extends State<Detail> {
                                 onRatingUpdate: (rating) async {
                                   final response = await putRatePlace(
                                       widget.id, rating.toInt());
-                                  print(response.rating);
-                                  print(response.ratingCount);
                                   const snackBar = SnackBar(
                                     content: Text('Place has been rated!'),
                                   );

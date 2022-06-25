@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gotour_mobile/services/response_meta.dart';
@@ -67,4 +68,20 @@ Future postUserRegister(name, email, password) async {
   decodedResponse = UserAuth.fromJson(jsonDecode(response.body));
   await prefs.setString('access_token', decodedResponse.accessToken);
   return decodedResponse;
+}
+
+Future logoutUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
+  final apiUrl = "${dotenv.env['BE_API_URL']}/logout";
+  final response = await http.post(Uri.parse(apiUrl), headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    HttpHeaders.authorizationHeader: "Bearer $accessToken",
+  });
+
+  if (response.statusCode == 200) {
+    await prefs.remove('access_token');
+    return response.statusCode;
+  }
+  return response.statusCode;
 }

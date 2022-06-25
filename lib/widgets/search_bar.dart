@@ -56,8 +56,9 @@ class SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[50],
-      padding: const EdgeInsets.all(10),
-      // margin: const EdgeInsets.only(top: 20),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      margin: const EdgeInsets.only(top: 10),
       child: Row(
         children: [
           Flexible(

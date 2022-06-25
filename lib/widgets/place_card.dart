@@ -43,8 +43,7 @@ class PlaceCard extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => Detail(id: id)));
         },
         child: Container(
-          margin:
-              isCarousel ? const EdgeInsets.symmetric(horizontal: 10) : null,
+          margin: isCarousel ? const EdgeInsets.symmetric(horizontal: 5) : null,
           width: double.infinity,
           child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
