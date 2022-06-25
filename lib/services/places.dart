@@ -6,53 +6,67 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // add place
-Future postPlace(String name, location, description) async {
+Future postPlace(
+  String name,
+  location,
+  description,
+  List<String> imgUrls,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('access_token');
   final apiUrl = "${dotenv.env['BE_API_URL']}/place";
   final response = await http.post(
     Uri.parse(apiUrl),
-    headers: <String, String>{
+    headers: {
       'Content-Type': 'application/json; charset=UTF-8',
+      HttpHeaders.authorizationHeader: "Bearer $accessToken",
     },
     body: jsonEncode(<String, dynamic>{
       'name': name,
       'location': location,
       'description': description,
-      // 'image': place.imgUrl,
+      'img_urls': imgUrls,
     }),
   );
 
   dynamic decodedResponse;
   if (response.body.isEmpty) {
     return response.statusCode;
+  } else {
+    decodedResponse = jsonDecode(response.body);
+    return decodedResponse;
   }
-  decodedResponse = Place.fromJson(jsonDecode(response.body));
-  return decodedResponse;
 }
 
 // edit place
-Future<Place> putPlace(
-    int id, String name, String location, String description) async {
+Future putPlace(
+  int id,
+  String name,
+  String location,
+  String description,
+  List imgUrls,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
   final placeResponse = await http.put(
     Uri.parse("${dotenv.env['BE_API_URL']}/place/$id"),
     headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
       HttpHeaders.authorizationHeader: "Bearer $accessToken",
     },
-    body: <String, String>{
+    body: jsonEncode(<String, dynamic>{
       'name': name,
       'location': location,
       'description': description,
-    },
+      'img_urls': imgUrls,
+    }),
   );
 
-  var placeResponseDecoded = jsonDecode(placeResponse.body);
-
+  // var placeResponseDecoded = jsonDecode(placeResponse.body);
   if (placeResponse.statusCode == 200) {
-    return Place.fromJson(placeResponseDecoded['data']);
+    return placeResponse.statusCode;
+    // return Place.fromJson(placeResponseDecoded['data']);
   } else {
-    print(placeResponseDecoded);
     throw Exception('Failed to edit place');
   }
 }
@@ -164,7 +178,10 @@ Future<Place> fetchPlace(int id) async {
   }
 }
 
-Future<Place> putRatePlace(int id, int rating) async {
+Future<Place> putRatePlace(
+  int id,
+  int rating,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
   final placeResponse = await http.put(
@@ -182,12 +199,14 @@ Future<Place> putRatePlace(int id, int rating) async {
   if (placeResponse.statusCode == 200) {
     return Place.fromJson(placeResponseDecoded['data']);
   } else {
-    print(placeResponseDecoded);
     throw Exception('Failed to rate place');
   }
 }
 
-Future toggleWishlistPlace(int id, bool isWishlisted) async {
+Future toggleWishlistPlace(
+  int id,
+  bool isWishlisted,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
   final http.Response response;
@@ -223,12 +242,9 @@ Future deletePlace(int id) async {
     HttpHeaders.authorizationHeader: "Bearer $accessToken",
   });
 
-  var placeResponseDecoded = jsonDecode(placeResponse.body);
-
   if (placeResponse.statusCode == 200) {
     return placeResponse.statusCode;
   } else {
-    print(placeResponseDecoded);
     throw Exception('Failed to rate place');
   }
 }

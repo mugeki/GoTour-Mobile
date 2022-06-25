@@ -141,14 +141,16 @@ class PlaceCard extends StatelessWidget {
                                     case MenuItems.edit:
                                       //Do something
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditPlaceForm(
-                                                      name: name,
-                                                      location: location,
-                                                      description:
-                                                          description)));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditPlaceForm(
+                                            id: id,
+                                            name: name,
+                                            location: location,
+                                            description: description,
+                                          ),
+                                        ),
+                                      );
                                       break;
                                     case MenuItems.delete:
                                       refreshList!(id);

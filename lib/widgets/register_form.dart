@@ -17,6 +17,13 @@ class RegisterFormState extends State<RegisterForm> {
   final nameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
+  late bool isLoading;
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+  }
 
   String? _validate(value) {
     if (value == null || value.isEmpty) {
@@ -26,6 +33,9 @@ class RegisterFormState extends State<RegisterForm> {
   }
 
   void _handleSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
     if (_formKey.currentState!.validate()) {
       final response = await postUserRegister(
         nameCtrl.text,
@@ -44,6 +54,9 @@ class RegisterFormState extends State<RegisterForm> {
         );
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -95,8 +108,14 @@ class RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: _handleSubmit,
-              child: const Text('REGISTER'),
+              onPressed: isLoading ? null : _handleSubmit,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 17,
+                      height: 17,
+                      child: CircularProgressIndicator(),
+                    )
+                  : const Text('REGISTER'),
             ),
             const SizedBox(height: 5),
             Row(

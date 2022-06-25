@@ -16,6 +16,13 @@ class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
+  late bool isLoading;
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+  }
 
   String? _validate(value) {
     if (value == null || value.isEmpty) {
@@ -25,6 +32,9 @@ class LoginFormState extends State<LoginForm> {
   }
 
   void _handleSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
     if (_formKey.currentState!.validate()) {
       final response = await postUserLogin(emailCtrl.text, passwordCtrl.text);
       print('response code: ${response.meta.code}');
@@ -39,6 +49,9 @@ class LoginFormState extends State<LoginForm> {
         );
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -77,8 +90,14 @@ class LoginFormState extends State<LoginForm> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: _handleSubmit,
-              child: const Text('LOGIN'),
+              onPressed: isLoading ? null : _handleSubmit,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 17,
+                      height: 17,
+                      child: CircularProgressIndicator(),
+                    )
+                  : const Text('LOGIN'),
             ),
             const SizedBox(height: 5),
             Row(

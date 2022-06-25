@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "530598318072",
+    "project_id": "profile-site-2c77f",
+    "storage_bucket": "profile-site-2c77f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530598318072:android:5c4a3c6528c8f0c6c9100d",
+        "android_client_info": {
+          "package_name": "gotour.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530598318072-f0o6qufu2jfafrooj40brq5pu786bvpg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgucyXcGpz7YfomRR9_zDoWKr1FPJRAg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530598318072-f0o6qufu2jfafrooj40brq5pu786bvpg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

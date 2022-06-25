@@ -5,14 +5,16 @@ import 'package:gotour_mobile/screens/my_place.dart';
 import 'package:gotour_mobile/screens/wishlist.dart';
 
 class MainMenu extends StatefulWidget {
-  const MainMenu({Key? key}) : super(key: key);
+  const MainMenu({Key? key, this.menuIndex}) : super(key: key);
+
+  final int? menuIndex;
 
   @override
   State<MainMenu> createState() => _MainMenuState();
 }
 
 class _MainMenuState extends State<MainMenu> {
-  int _selectedIndex = 0;
+  late int _selectedIndex = widget.menuIndex ?? 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     ExploreScreen(),
