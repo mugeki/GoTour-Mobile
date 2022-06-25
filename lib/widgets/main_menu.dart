@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gotour_mobile/screens/explore.dart';
 import 'package:gotour_mobile/screens/home.dart';
+import 'package:gotour_mobile/screens/my_place.dart';
+import 'package:gotour_mobile/screens/wishlist.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -14,8 +16,8 @@ class _MainMenuState extends State<MainMenu> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     ExploreScreen(),
-    Text('Saved Places Screen'),
-    Text('My Places Screen'),
+    MyWishlist(),
+    MyPlaces(),
   ];
 
   void _onItemTapped(int index) {
@@ -29,20 +31,6 @@ class _MainMenuState extends State<MainMenu> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: _selectedIndex != 1
-            ? AppBar(
-                title: const Text('GoTour'),
-                titleTextStyle: const TextStyle(
-                  color: Colors.teal,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                backgroundColor: Colors.white,
-              )
-            : PreferredSize(
-                preferredSize: const Size(0.0, 0.0),
-                child: Container(),
-              ),
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

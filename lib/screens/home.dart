@@ -23,71 +23,85 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      // minimum: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          const Text(
-            'Most Rated',
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-          ),
-          FutureBuilder<List<Place>>(
-              future: _mostRatedPlaces,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CarouselSlider(
-                    options: CarouselOptions(height: 215.0),
-                    items: (snapshot.data as List).take(4).map((place) {
-                      return PlaceCard(
-                        id: place.id,
-                        isCarousel: true,
-                        isMyPlace: false,
-                        imgUrl: place.imgUrl,
-                        location: place.location,
-                        name: place.name,
-                        rating: double.parse(place.rating),
-                        ratingCount: place.ratingCount,
-                        isWishlisted: place.isWishlisted,
-                      );
-                    }).toList(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                // By default, show a loading spinner.
-                return const Center(child: CircularProgressIndicator());
-              }),
-          const Text(
-            'Recently Added',
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-          ),
-          FutureBuilder(
-              future: _recentPlaces,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CarouselSlider(
-                    options: CarouselOptions(height: 215.0),
-                    items: (snapshot.data as List).take(4).map((place) {
-                      return PlaceCard(
-                        id: place.id,
-                        isCarousel: true,
-                        isMyPlace: false,
-                        imgUrl: place.imgUrl,
-                        location: place.location,
-                        name: place.name,
-                        rating: double.parse(place.rating),
-                        ratingCount: place.ratingCount,
-                        isWishlisted: place.isWishlisted,
-                      );
-                    }).toList(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                // By default, show a loading spinner.
-                return const Center(child: CircularProgressIndicator());
-              }),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/images/home_logo.png'),
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: const Text(
+                'Most Rated',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+            ),
+            FutureBuilder<List<Place>>(
+                future: _mostRatedPlaces,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return CarouselSlider(
+                      options: CarouselOptions(height: 215.0),
+                      items: (snapshot.data as List).take(4).map((place) {
+                        return PlaceCard(
+                          id: place.id,
+                          isCarousel: true,
+                          isMyPlace: false,
+                          imgUrl: place.imgUrl,
+                          location: place.location,
+                          name: place.name,
+                          description: place.description,
+                          rating: double.parse(place.rating),
+                          ratingCount: place.ratingCount,
+                          isWishlisted: place.isWishlisted,
+                        );
+                      }).toList(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  // By default, show a loading spinner.
+                  return const Center(child: CircularProgressIndicator());
+                }),
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: const Text(
+                'Recently Added',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+            ),
+            FutureBuilder(
+                future: _recentPlaces,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return CarouselSlider(
+                      options: CarouselOptions(height: 215.0),
+                      items: (snapshot.data as List).take(4).map((place) {
+                        return PlaceCard(
+                          id: place.id,
+                          isCarousel: true,
+                          isMyPlace: false,
+                          imgUrl: place.imgUrl,
+                          location: place.location,
+                          name: place.name,
+                          description: place.description,
+                          rating: double.parse(place.rating),
+                          ratingCount: place.ratingCount,
+                          isWishlisted: place.isWishlisted,
+                        );
+                      }).toList(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  // By default, show a loading spinner.
+                  return const Center(child: CircularProgressIndicator());
+                }),
+          ],
+        ),
       ),
     );
   }

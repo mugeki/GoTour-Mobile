@@ -88,6 +88,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               rating: double.parse(item.rating),
               ratingCount: item.ratingCount,
               isWishlisted: item.isWishlisted,
+              description: item.description,
             ),
           ),
         ),
