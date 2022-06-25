@@ -58,11 +58,15 @@ Future<Place> putPlace(
 }
 
 Future<List<Place>> fetchPlaces(
-    double page, String keyword, String sortBy) async {
+  double page,
+  String keyword,
+  String sortBy,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString('access_token');
+
   final placeResponse = await http.get(Uri.parse(
-      "${dotenv.env['BE_API_URL']}/place?page=$page&keyword=$keyword&limit=$sortBy"));
+      "${dotenv.env['BE_API_URL']}/place?page=$page&keyword=$keyword&sort_by=$sortBy"));
   final wishlistResponse = await http
       .get(Uri.parse("${dotenv.env['BE_API_URL']}/wishlist"), headers: {
     HttpHeaders.authorizationHeader: "Bearer $accessToken",

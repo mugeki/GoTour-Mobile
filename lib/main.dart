@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gotour_mobile/screens/auth.dart';
@@ -6,6 +5,7 @@ import 'package:gotour_mobile/widgets/main_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
@@ -15,10 +15,6 @@ class MyApp extends StatelessWidget {
 
   Future<String> isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(prefs.containsKey('access_token'));
-    if (kDebugMode) {
-      prefs.remove('access_token');
-    }
     bool loggedIn = prefs.containsKey('access_token');
 
     if (loggedIn == true) {
