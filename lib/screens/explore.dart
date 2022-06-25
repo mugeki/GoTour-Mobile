@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gotour_mobile/services/places.dart';
 import 'package:gotour_mobile/widgets/place_card.dart';
 import 'package:gotour_mobile/widgets/search_bar.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -13,57 +14,48 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   late String _searchQuery;
   late String _sortBy;
-  late Future<List<Place>> _places;
-  bool _isLoading = true;
-  late bool _isLastPage;
-  late int _pageNumber;
+
+  static const _pageSize = 9;
+  final PagingController<int, Place> _pagingController =
+      PagingController(firstPageKey: 0);
 
   @override
   void initState() {
     super.initState();
     _searchQuery = "";
     _sortBy = "created_at";
-    _places = fetchPlaces(1, _searchQuery, _sortBy).whenComplete(() => {
-          setState(() {
-            _isLoading = false;
-          }),
-        });
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey, _searchQuery, _sortBy);
+    });
+  }
+
+  Future<void> _fetchPage(
+    int pageKey,
+    String keyword,
+    String sortBy,
+  ) async {
+    try {
+      final newItems = await fetchPlaces(1, _searchQuery, _sortBy);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   void onSubmitSearchBar(String query) {
-    print("masuk onSubmitSearchBar: ${query}");
-    setState(() {
-      _isLoading = true;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(
-        () {
-          _searchQuery = query;
-          _places = fetchPlaces(1, _searchQuery, _sortBy).whenComplete(
-            () => setState(() {
-              _isLoading = false;
-            }),
-          );
-        },
-      );
-    });
+    _searchQuery = query;
+    _pagingController.refresh();
   }
 
   void onSortChanged(String sortBy) {
-    print("masuk onSortChanged: ${sortBy}");
-    setState(() {
-      _isLoading = true;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _sortBy = sortBy;
-        _places = fetchPlaces(1, _searchQuery, _sortBy).whenComplete(
-          () => setState(() {
-            _isLoading = false;
-          }),
-        );
-      });
-    });
+    _sortBy = sortBy;
+    _pagingController.refresh();
   }
 
   @override
@@ -83,40 +75,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
       ),
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 10.0, right: 10.0),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : FutureBuilder<List<Place>>(
-                future: _places,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemCount: snapshot.data?.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.only(top: 10, bottom: 5),
-                            child: PlaceCard(
-                              id: snapshot.data![index].id,
-                              isCarousel: false,
-                              isMyPlace: false,
-                              imgUrl: snapshot.data![index].imgUrl,
-                              location: snapshot.data![index].location,
-                              name: snapshot.data![index].name,
-                              rating:
-                                  double.parse(snapshot.data![index].rating),
-                              ratingCount: snapshot.data![index].ratingCount,
-                              isWishlisted: snapshot.data![index].isWishlisted,
-                            ),
-                          );
-                        });
-                  } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
-                  }
-                  return const Center(
-                    child: Text("No places found"),
-                  );
-                },
-              ),
+        child: PagedListView<int, Place>(
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate<Place>(
+            itemBuilder: (context, item, index) => PlaceCard(
+              id: item.id,
+              isCarousel: false,
+              isMyPlace: false,
+              imgUrl: item.imgUrl,
+              location: item.location,
+              name: item.name,
+              rating: double.parse(item.rating),
+              ratingCount: item.ratingCount,
+              isWishlisted: item.isWishlisted,
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
