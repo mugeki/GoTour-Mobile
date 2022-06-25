@@ -1,13 +1,12 @@
-// ignore_for_file: unused_field, non_constant_identifier_names
-
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:gotour_mobile/services/places.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:async';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:gotour_mobile/api/firebase_api.dart';
+import 'package:gotour_mobile/services/places.dart';
+import 'package:gotour_mobile/widgets/main_menu.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPlaceForm extends StatefulWidget {
   const AddPlaceForm({
@@ -23,214 +22,185 @@ class AddPlaceForm extends StatefulWidget {
 class AddPlaceFormState extends State<AddPlaceForm> {
   final ImagePicker imagePicker = ImagePicker();
 
-  List<XFile>? imageFileList = [];
-
-  void selectImages() async {
-    final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
-    if (selectedImages!.isNotEmpty) {
-      imageFileList!.addAll(selectedImages);
-    }
-    setState(() {});
-  }
-
-  // Future<List<String>> uploadFiles(List imageFileList) async {
-  //   List<String> imagesUrls = [];
-
-  //   imageFileList.forEach((imageFileList) async {
-  //     FirebaseStorage.instance.ref().child('posts/${imageFileList.path}');
-  //   });
-  //   print(imagesUrls);
-  //   return imagesUrls;
-  // }
-
+  List<File> imageFileList = [];
   final _formKey = GlobalKey<FormState>();
   final nameCtrl = TextEditingController();
   final locationCtrl = TextEditingController();
   final descCtrl = TextEditingController();
-  // final imgCtrl = FileController();
+  late bool isLoading;
 
-  PlatformFile? pickedFile;
-// upload single image to firebase
-  Future uploadFile() async {
-    final path = 'files/${pickedFile!.name}';
-    final file = File(pickedFile!.path!);
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    ref.putFile(file);
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
   }
 
-// select single image from gallery
-  Future selectFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png'],
-    );
-    if (result == null) return;
+  String? _validate(value) {
+    if (value == null || value.isEmpty) {
+      return 'Field cannot be empty';
+    }
+    return null;
+  }
 
+  void selectImages() async {
+    final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
+    if (selectedImages!.isNotEmpty) {
+      final newImages = selectedImages.map((v) {
+        return File(v.path);
+      });
+      setState(() {
+        imageFileList.addAll(newImages);
+      });
+    }
+  }
+
+  Future<List<String>> uploadFile() async {
+    List<String> imgsUrl = [];
+    for (var imageFile in imageFileList) {
+      final res = await FirebaseApi.uploadFile(imageFile);
+      imgsUrl.add(res!);
+    }
+    return imgsUrl;
+  }
+
+  void _handleSubmit(BuildContext context) async {
     setState(() {
-      pickedFile = result.files.first;
+      isLoading = true;
     });
-  }
-
-  void _handleSubmit() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && imageFileList.isNotEmpty) {
+      final images = await uploadFile();
       final response = await postPlace(
         nameCtrl.text,
         locationCtrl.text,
         descCtrl.text,
+        images,
       );
-      print('response code: ${response.meta.code}');
-      if (response.meta.code == 200) {
-        uploadFile();
-        print("MASUK PAK EKOOOOOOOOOOO");
-        const snackBar = SnackBar(
-          content: Text('Place has been added!'),
+      if (response == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Place updated!'),
+        ));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainMenu(menuIndex: 3),
+          ),
+          (Route<dynamic> route) => false,
         );
-        // Navigator.pop(
-        //   context,
-        //   // MaterialPageRoute(builder: (context) => const MyPlaces()),
-        // );
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(
-                  labelText: 'Place Name',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)))),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: locationCtrl,
-              decoration: const InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)))),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: descCtrl,
-              decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)))),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    selectFile();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    primary: Colors.teal,
-                    backgroundColor: Colors.white,
-                    // borderSide: const BorderSide(
-                    //   color: Colors.teal,
-                    // ),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(100))),
+      appBar: AppBar(
+        title: const Text('Add Place'),
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+            padding: const EdgeInsets.all(50),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    controller: nameCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Place Name',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: _validate,
                   ),
-                  child: pickedFile != true
-                      ? const Text('Select Photo(s)')
-                      : Text(pickedFile?.path ?? 'No file selected'),
-                ),
-                const SizedBox(width: 10),
-                OutlinedButton(
-                  onPressed: () {
-                    // uploadFile();
-                    selectImages();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    primary: Colors.teal,
-                    backgroundColor: Colors.white,
-                    // borderSide: const BorderSide(
-                    //   color: Colors.teal,
-                    // ),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(100))),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: locationCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Location',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: _validate,
                   ),
-                  child: const Text('Take multi Photo(s)'),
-                ),
-              ],
-            ),
-            // const SizedBox(height: 5),
-            Container(
-              // child: Text(pickedFile!.name),
-              child: Text(pickedFile?.path ?? 'No file selected'),
-              // : Image.file(pickedFile?.path ?? 'No file selected'),
-              // : Image.file(File(pickedFile!.path!)),
-              // width: double.infinity,
-              // fit: BoxFit.cover,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: uploadFile,
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 255, 255)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ))),
-              // padding:
-              child: const Text(
-                'upload',
-                style: TextStyle(),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: descCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: _validate,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      OutlinedButton(
+                          onPressed: () {
+                            selectImages();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            primary: Colors.teal,
+                            backgroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100))),
+                          ),
+                          child: const Text('Select Photo(s)')),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  imageFileList.isEmpty
+                      ? Container()
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            childAspectRatio: 16 / 9,
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                          itemCount: imageFileList.length,
+                          itemBuilder: (context, index) {
+                            if (kIsWeb) {
+                              return Image.network(
+                                imageFileList[index].path,
+                                fit: BoxFit.fitHeight,
+                                height: 90,
+                              );
+                            }
+                            return Image.file(
+                              imageFileList[index],
+                              fit: BoxFit.fitHeight,
+                              height: 90,
+                            );
+                          },
+                        ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: isLoading ? null : () => _handleSubmit(context),
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 17,
+                            height: 17,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text('ADD PLACE'),
+                  )
+                ],
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _handleSubmit();
-              },
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 255, 255)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ))),
-              // padding:
-              child: const Text(
-                'Add Place',
-                style: TextStyle(),
-              ),
-            )
-          ],
-        ),
+            )),
       ),
     );
   }
